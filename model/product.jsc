@@ -1,0 +1,45 @@
+const pool = require("../config/db.jsc");
+
+exports.GetProducts = () => {
+    return new Promise(function(resolve, reject) {
+        var sql = "select * from product";
+        pool.query(sql, (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};
+
+exports.InsertProducts = () => {
+    return new Promise(function(resolve, reject) {
+        var sql = "insert into product set ?";
+        pool.query(sql, [data], (err, result) => {
+            if (err) reject(err);
+
+            resolve(true);
+        });
+    });
+};
+
+exports.UpdateProducts = () => {
+    return new Promise(function(resolve, reject) {
+        var sql = "update product set ? where id = ?";
+        pool.query(sql, [data, data.id], (err, result) => {
+            if (err) reject(err);
+
+            resolve(true);
+        });
+    });
+};
+
+exports.UpdateProducts = () => {
+    return new Promise(function(resolve, reject) {
+        var sql = "delete product set ? where id = ?";
+        pool.query(sql, [data], (err, result) => {
+            if (err) reject(err);
+
+            resolve(true);
+        });
+    });
+};
