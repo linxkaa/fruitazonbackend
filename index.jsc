@@ -7,6 +7,10 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const routes = require("./routes.jsc");
+
+app.use("/products", routes.productRoutes);
+
 app.listen(3002, () => {
     console.log("Listening to port 3002...");
 });
