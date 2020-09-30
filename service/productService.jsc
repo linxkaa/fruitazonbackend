@@ -43,3 +43,61 @@ exports.getProducts = async(req, res) => {
             });
         });
 };
+
+exports.filteredProduct = async(req, res) => {
+    let getProducts = product_m.FilteredProducts(req.query.search);
+    getProducts
+        .then(function(result) {
+            res.json({
+                status: 200,
+                success: true,
+                return: result,
+            });
+        })
+        .catch(function(err) {
+            console.log(err);
+            res.json({
+                status: 500,
+                success: false,
+            });
+        });
+};
+
+exports.filteredProductByCategory = async(req, res) => {
+    let getProducts = product_m.FilteredProductsByCategory(req.query.search);
+    getProducts
+        .then(function(result) {
+            res.json({
+                status: 200,
+                success: true,
+                return: result,
+            });
+        })
+        .catch(function(err) {
+            console.log(err);
+            res.json({
+                status: 500,
+                success: false,
+            });
+        });
+};
+
+exports.cartProducts = async(req, res) => {
+    let getProducts = product_m.GetCartProducts(req.body.product_ids);
+    console.log(req.body.product_ids);
+    getProducts
+        .then(function(result) {
+            res.json({
+                status: 200,
+                success: true,
+                return: result,
+            });
+        })
+        .catch(function(err) {
+            console.log(err);
+            res.json({
+                status: 500,
+                success: false,
+            });
+        });
+};

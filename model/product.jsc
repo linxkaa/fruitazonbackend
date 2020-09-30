@@ -11,6 +11,42 @@ exports.GetProducts = () => {
     });
 };
 
+exports.GetCartProducts = (product_ids) => {
+    product_ids = product_ids.join(", ");
+
+    return new Promise(function(resolve, reject) {
+        var sql = `select * from product where id in(${product_ids})`;
+        pool.query(sql, (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};
+
+exports.FilteredProducts = (name) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `select * from product where title like '%${name}%'`;
+        pool.query(sql, (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};
+
+exports.FilteredProductsByCategory = (name) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `SELECT * FROM product_category pc JOIN product p WHERE p.id = pc.product_id && category_name like '%${name}%'`;
+        pool.query(sql, (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};
+
+// ini buat admin
 exports.InsertProducts = () => {
     return new Promise(function(resolve, reject) {
         var sql = "insert into product set ?";
@@ -33,7 +69,7 @@ exports.UpdateProducts = () => {
     });
 };
 
-exports.UpdateProducts = () => {
+exports.DeleteProducts = () => {
     return new Promise(function(resolve, reject) {
         var sql = "delete product set ? where id = ?";
         pool.query(sql, [data], (err, result) => {
