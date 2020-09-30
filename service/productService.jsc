@@ -1,4 +1,4 @@
-const product_m = require("../model/product.jsc");
+const product_m = require("../model/productModel.jsc");
 
 exports.insertProducts = async(req, res) => {
     let data = {

@@ -1,5 +1,7 @@
 const productRoutes = require("./routes/productsRoute.jsc");
+const authRoutes = require("./routes/authRoute.jsc");
 
 module.exports = {
     productRoutes,
+    authRoutes,
 };

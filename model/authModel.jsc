@@ -1,0 +1,12 @@
+const pool = require("../config/db.jsc");
+
+exports.InsertProducts = (username, password) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `select id from user_login where username = '${username}' and password = '${password}'`;
+        pool.query(sql, [data], (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};

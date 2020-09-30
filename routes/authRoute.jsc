@@ -1,0 +1,9 @@
+const express = require("express");
+
+const router = express.Router();
+
+let authService = require("../service/authService.jsc");
+
+router.post("/login", authService.login);
+
+module.exports = router;

@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const routes = require("./routes.jsc");
 
 app.use("/products", routes.productRoutes);
+app.use("/user", routes.authRoutes);
 
 app.listen(3002, () => {
     console.log("Listening to port 3002...");

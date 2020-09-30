@@ -1,0 +1,29 @@
+const authModel = require("../model/authModel.jsc");
+
+exports.login = async(req, res) => {
+    let adminId = authModel.login(req.body.username, req.body.password);
+    adminId
+        .then(function(result) {
+            if (result != undefined) {
+                //call jwt  -> generate token
+                res.json({
+                    errorMsg: "Berhasil Login",
+                    status: 200,
+                    success: true,
+                });
+            } else {
+                res.json({
+                    errorMsg: "Gagal Login",
+
+                    status: 200,
+                    success: true,
+                });
+            }
+        })
+        .catch(function(err) {
+            res.json({
+                status: 500,
+                success: false,
+            });
+        });
+};
