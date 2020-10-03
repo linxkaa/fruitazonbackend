@@ -1,9 +1,26 @@
 const pool = require("../config/db.jsc");
 
-exports.InsertProducts = (username, password) => {
+exports.Login = (username, password) => {
     return new Promise(function(resolve, reject) {
-        var sql = `select id from user_login where username = '${username}' and password = '${password}'`;
-        pool.query(sql, [data], (err, result) => {
+        var sql = `
+        select ul.id, up.name, up.address, up.email from user_login ul   
+        join user_profile up on ul.username = '${username}' and ul.password = '${password}'
+        where ul.id = up.user_id 
+        `;
+        pool.query(sql, [username, password], (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};
+
+exports.ValidateLogin = (username) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `
+select * from user_login where username= '${username}'
+        `;
+        pool.query(sql, [username], (err, result) => {
             if (err) reject(err);
 
             resolve(result);

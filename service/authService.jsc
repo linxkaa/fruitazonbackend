@@ -1,21 +1,58 @@
 const authModel = require("../model/authModel.jsc");
+const jwt = require("../lib/jwt.jsc");
+const bcrypt = require("../lib/bcrypt.jsc");
 
 exports.login = async(req, res) => {
-    let adminId = authModel.login(req.body.username, req.body.password);
-    adminId
+    let userId = authModel.Login(
+        req.body.username,
+        bcrypt.Encrypt(req.body.password)
+    );
+    let validateUser = authModel.ValidateLogin(req.body.username);
+
+    validateUser
         .then(function(result) {
-            if (result != undefined) {
-                //call jwt  -> generate token
-                res.json({
-                    errorMsg: "Berhasil Login",
-                    status: 200,
-                    success: true,
-                });
+            console.log(result);
+            if (result.length > 0) {
+                userId
+                    .then(function(result) {
+                        if (result.length > 0) {
+                            let data = {
+                                user_id: result[0].id,
+                                name: result[0].name,
+                                address: result[0].address,
+                                email: result[0].email,
+                            };
+                            let token = jwt.Encode(data);
+
+                            res.json({
+                                msg: "Berhasil Login",
+                                status: 200,
+                                errorCode: null,
+                                success: true,
+                                token: token,
+                            });
+                        } else {
+                            console.log("test");
+
+                            res.json({
+                                msg: "Password Salah",
+                                status: 200,
+                                errorCode: "FAILED",
+                                success: true,
+                            });
+                        }
+                    })
+                    .catch(function(err) {
+                        res.json({
+                            status: 500,
+                            success: false,
+                        });
+                    });
             } else {
                 res.json({
-                    errorMsg: "Gagal Login",
-
+                    msg: "User Belum Terdaftar",
                     status: 200,
+                    errorCode: "FAILED",
                     success: true,
                 });
             }
@@ -26,4 +63,14 @@ exports.login = async(req, res) => {
                 success: false,
             });
         });
+};
+
+exports.userData = async(req, res) => {
+    let token = jwt.Decode(req.body.token);
+
+    res.json({
+        status: 200,
+        success: true,
+        return: token,
+    });
 };

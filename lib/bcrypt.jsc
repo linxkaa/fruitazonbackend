@@ -1,0 +1,6 @@
+const bcrypt = require("bcrypt");
+const encryptConfig = require("../config/bcrypt.jsc");
+
+exports.Encrypt = (data) => {
+    return bcrypt.hashSync(data, encryptConfig.salt);
+};
