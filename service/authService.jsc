@@ -16,12 +16,16 @@ exports.login = async(req, res) => {
                     .then(function(result) {
                         if (result.length > 0) {
                             let data = {
+                                username: req.body.username,
+                                password: bcrypt.Encrypt(req.body.password),
                                 user_id: result[0].id,
                                 name: result[0].name,
                                 address: result[0].address,
                                 email: result[0].email,
                             };
                             let token = jwt.Encode(data);
+                            console.log(token);
+
                             res.json({
                                 msg: "Berhasil Login",
                                 status: 200,
@@ -72,27 +76,102 @@ exports.userData = async(req, res) => {
 };
 
 exports.registerUser = async(req, res) => {
-    let registerUser = authModel.Register(
-        req.body.username,
-        bcrypt.Encrypt(req.body.password),
+    let validateUser = authModel.ValidateLogin(req.body.username);
+
+    validateUser
+        .then(function(result) {
+            if (result.length === 1) {
+                res.json({
+                    msg: "User Sudah Terdaftar",
+                    status: 200,
+                    errorCode: "FAILED",
+                    success: true,
+                });
+            } else {
+                let registerUser = authModel.Register(
+                    req.body.username,
+                    bcrypt.Encrypt(req.body.password),
+                    req.body.name,
+                    req.body.address,
+                    req.body.email
+                );
+
+                registerUser
+                    .then(function(result) {
+                        res.json({
+                            status: 200,
+                            errorCode: "OK",
+                            success: true,
+                        });
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                        res.json({
+                            status: 500,
+                            success: false,
+                            message: err,
+                        });
+                    });
+            }
+        })
+        .catch(function(err) {
+            res.json({
+                status: 500,
+                success: false,
+            });
+        });
+};
+
+exports.insertProducts = async(req, res) => {
+    let insert = authModel.UpdateProfile(
+        req.body.id,
         req.body.name,
         req.body.address,
         req.body.email
     );
+    let userId = authModel.Login(
+        req.body.username,
+        bcrypt.Encrypt(req.body.password)
+    );
 
-    registerUser
-        .then(function(result) {
-            res.json({
-                status: 200,
-                success: true,
+    insert
+        .then(function() {
+            userId.then(function(result) {
+                console.log(req.body.password);
+                if (result.length > 0) {
+                    let data = {
+                        username: req.body.username,
+                        password: bcrypt.Encrypt(req.body.password),
+                        user_id: result[0].id,
+                        name: result[0].name,
+                        address: result[0].address,
+                        email: result[0].email,
+                    };
+                    let token = jwt.Encode(data);
+                    console.log(token);
+                    res.json({
+                        msg: "Berhasil Login",
+                        status: 200,
+                        errorCode: null,
+                        success: true,
+                        token: token,
+                    });
+                } else {
+                    res.json({
+                        msg: "Password Salah",
+                        status: 200,
+                        errorCode: "FAILED",
+                        success: true,
+                    });
+                }
             });
         })
-        .catch(function(err) {
-            console.log(err);
-            res.json({
-                status: 500,
-                success: false,
-                message: err,
-            });
+
+    .catch(function(err) {
+        res.json({
+            status: 500,
+            success: false,
+            message: err,
         });
+    });
 };

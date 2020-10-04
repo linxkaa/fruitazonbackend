@@ -8,5 +8,6 @@ router.get("/select", productsService.getProducts);
 router.get("/filteredproduct", productsService.filteredProduct);
 router.get("/filteredbycat", productsService.filteredProductByCategory);
 router.post("/cart", productsService.cartProducts);
+router.post("/invoice", productsService.invoice);
 
 module.exports = router;

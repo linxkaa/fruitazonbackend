@@ -40,19 +40,24 @@ exports.Register = (username, password, name, address, email) => {
             if (err) {
                 reject(err);
             } else {
-                pool.query(sql2, [
-                    username,
-                    name,
-                    address,
-                    email,
-                    (err) => {
-                        if (err) reject(err);
+                pool.query(sql2, [username, name, address, email], (err) => {
+                    if (err) reject(err);
 
-                        resolve(true);
-                    },
-                ]);
+                    resolve(true);
+                });
                 resolve(true);
             }
+        });
+    });
+};
+
+exports.UpdateProfile = (user_id, name, address, email) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `update user_profile set name =  '${name}', address = '${address}', email = '${email}' where  user_id =${user_id}`;
+        pool.query(sql, [user_id, name, address, email], (err, result) => {
+            if (err) reject(err);
+
+            resolve(true);
         });
     });
 };
