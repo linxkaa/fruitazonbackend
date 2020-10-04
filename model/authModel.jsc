@@ -27,3 +27,32 @@ select * from user_login where username= '${username}'
         });
     });
 };
+
+exports.Register = (username, password, name, address, email) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `
+            INSERT INTO user_login (username, password)
+            VALUES ('${username}', '${password}')
+        `;
+        var sql2 = `INSERT INTO user_profile (user_id,name, address, email)
+         VALUES ((SELECT id FROM user_login WHERE username ='${username}'), '${name}', '${address}', '${email}');`;
+        pool.query(sql, [username, password], (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                pool.query(sql2, [
+                    username,
+                    name,
+                    address,
+                    email,
+                    (err) => {
+                        if (err) reject(err);
+
+                        resolve(true);
+                    },
+                ]);
+                resolve(true);
+            }
+        });
+    });
+};
