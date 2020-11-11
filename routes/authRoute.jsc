@@ -7,6 +7,6 @@ let authService = require("../service/authService.jsc");
 router.post("/login", authService.login);
 router.post("/userdata", authService.userData);
 router.post("/register", authService.registerUser);
-router.post("/editprofile", authService.insertProducts);
+router.post("/editprofile", authService.insertDataProfile);
 
 module.exports = router;

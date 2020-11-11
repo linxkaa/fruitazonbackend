@@ -6,8 +6,11 @@ let productsService = require("../service/productService.jsc");
 router.post("/insert", productsService.insertProducts);
 router.get("/select", productsService.getProducts);
 router.get("/filteredproduct", productsService.filteredProduct);
-router.get("/filteredbycat", productsService.filteredProductByCategory);
+router.post("/filteredbycat", productsService.filteredProductByCategory);
 router.post("/cart", productsService.cartProducts);
 router.post("/invoice", productsService.invoice);
+router.post("/invoicedata", productsService.invoiceData);
+router.post("/invoicedetail", productsService.invoiceDetail);
+router.post("/updatestatus", productsService.updateInvoiceStatus);
 
 module.exports = router;

@@ -45,6 +45,43 @@ exports.getProducts = async(req, res) => {
         });
 };
 
+exports.invoiceData = async(req, res) => {
+    let getProducts = product_m.InvoiceData(req.body.user_id);
+    getProducts
+        .then(function(result) {
+            res.json({
+                status: 200,
+                success: true,
+                return: result,
+            });
+        })
+        .catch(function(err) {
+            console.log(err);
+            res.json({
+                status: 500,
+                success: false,
+            });
+        });
+};
+
+exports.invoiceDetail = async(req, res) => {
+    let getProducts = product_m.InvoiceDetail(req.body.header_id);
+    getProducts
+        .then(function(result) {
+            res.json({
+                status: 200,
+                success: true,
+                return: result,
+            });
+        })
+        .catch(function(err) {
+            console.log(err);
+            res.json({
+                status: 500,
+                success: false,
+            });
+        });
+};
 exports.filteredProduct = async(req, res) => {
     let getProducts = product_m.FilteredProducts(req.query.search);
     getProducts
@@ -65,7 +102,7 @@ exports.filteredProduct = async(req, res) => {
 };
 
 exports.filteredProductByCategory = async(req, res) => {
-    let getProducts = product_m.FilteredProductsByCategory(req.query.search);
+    let getProducts = product_m.FilteredProductsByCategory(req.body.id);
     getProducts
         .then(function(result) {
             res.json({
@@ -85,7 +122,6 @@ exports.filteredProductByCategory = async(req, res) => {
 
 exports.cartProducts = async(req, res) => {
     let getProducts = product_m.GetCartProducts(req.body.product_ids);
-    console.log(req.body.product_ids);
     getProducts
         .then(function(result) {
             res.json({
@@ -118,16 +154,15 @@ exports.invoice = async(req, res) => {
             connection.query(
                 `INSERT INTO invoice_header set ?`, [userData],
                 (err, result) => {
-                    console.log(result);
                     if (err) {
                         connection.rollback(function() {
                             if (err) {
-                                console.log(err);
                                 res.json({
                                     status: 500,
                                     success: false,
                                     msg: err,
                                 });
+                                return;
                             }
                         });
                     }
@@ -154,6 +189,7 @@ exports.invoice = async(req, res) => {
                                                         success: false,
                                                         msg: err,
                                                     });
+                                                    return;
                                                 }
                                             });
                                         }
@@ -163,17 +199,16 @@ exports.invoice = async(req, res) => {
                                                 connection.rollback(function(reject) {
                                                     if (err) console.log(err);
                                                 });
-                                            } else {
-                                                res.json({
-                                                    status: 200,
-                                                    success: true,
-                                                    //   msg: err,
-                                                });
                                             }
                                         });
                                     }
                                 );
                             }
+                            res.send({
+                                status: 200,
+                                success: true,
+                            });
+                            return;
                         })
                         .catch(function(err) {
                             console.log(err);
@@ -182,9 +217,36 @@ exports.invoice = async(req, res) => {
                                 success: false,
                                 msg: err,
                             });
+                            return;
                         });
                 }
             );
+        });
+    });
+};
+
+exports.updateInvoiceStatus = async(req, res) => {
+    let insertProducts = product_m.UpdateInvoiceStatus(
+        req.body.status,
+        req.body.id
+    );
+
+    insertProducts
+        .then(function() {
+            res.json({
+                msg: "Berhasil Update",
+                status: 200,
+                errorCode: null,
+                success: true,
+            });
+        })
+
+    .catch(function(err) {
+        console.log(err);
+        res.json({
+            status: 500,
+            success: false,
+            message: err,
         });
     });
 };

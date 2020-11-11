@@ -24,6 +24,28 @@ exports.GetCartProducts = (product_ids) => {
     });
 };
 
+exports.InvoiceData = (id) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `SELECT * FROM invoice_header WHERE user_id='${id}'`;
+        pool.query(sql, (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};
+
+exports.InvoiceDetail = (id) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `SELECT * FROM invoice_detail WHERE invoice_header_id = '${id}'`;
+        pool.query(sql, (err, result) => {
+            if (err) reject(err);
+
+            resolve(result);
+        });
+    });
+};
+
 exports.FilteredProducts = (name) => {
     return new Promise(function(resolve, reject) {
         var sql = `select * from product where title like '%${name}%'`;
@@ -37,7 +59,7 @@ exports.FilteredProducts = (name) => {
 
 exports.FilteredProductsByCategory = (name) => {
     return new Promise(function(resolve, reject) {
-        var sql = `SELECT * FROM product_category pc JOIN product p WHERE p.id = pc.product_id && category_name like '%${name}%'`;
+        var sql = `SELECT * FROM product_category pc JOIN product p WHERE p.category_id = pc.id && pc.id = '${name}'`;
         pool.query(sql, (err, result) => {
             if (err) reject(err);
 
@@ -73,6 +95,17 @@ exports.DeleteProducts = () => {
     return new Promise(function(resolve, reject) {
         var sql = "delete product set ? where id = ?";
         pool.query(sql, [data], (err, result) => {
+            if (err) reject(err);
+
+            resolve(true);
+        });
+    });
+};
+
+exports.UpdateInvoiceStatus = (status, id) => {
+    return new Promise(function(resolve, reject) {
+        var sql = `update invoice_header set status_payment = '${status}' where  id =${id}`;
+        pool.query(sql, [status, id], (err, result) => {
             if (err) reject(err);
 
             resolve(true);
